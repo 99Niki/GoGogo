@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GoGogo — great trips start together</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to planner</a>
+  <header class="hero">
+    <h1>GoGogo ↗</h1>
+    <p>Plan your days, track your spending, and split the costs—wherever you go, whoever comes along.</p>
+  </header>
+  <main id="main" tabindex="-1">
+    <p id="status" role="status">Your next adventure starts here. Plans stay on this device.</p>
+      <section class="card trip-header" aria-labelledby="setup-title">
+        <h2 id="setup-title" class="visually-hidden">Trip details</h2>
+        <label>Trip name<input id="trip-name" form="trip-form" maxlength="100"></label>
+        <form id="city-form" class="trip-toolbar">
+          <label>Where · destination<input id="city" required maxlength="80"></label>
+          <label>From · start date<input id="start" form="trip-form" type="date" required></label>
+          <label>Days<input id="days" type="number" min="1" max="30" value="3" required></label>
+          <label>Currency<select id="currency" form="trip-form"><option value="USD">USD · US dollar</option><option value="EUR">EUR · Euro</option><option value="GBP">GBP · British pound</option><option value="JPY">JPY · Japanese yen</option><option value="CAD">CAD · Canadian dollar</option></select></label>
+          <button type="submit">Generate plan ↗</button>
+        </form>
+        <p class="hint">Enter a city and days to generate an editable starter plan. Add more cities in travel order. Built-in suggestions, not live recommendations; check opening hours, reservations, and travel times.</p>
+        <ul id="cities" class="list"></ul>
+        <form id="trip-form">
+          <div class="fields">
+            <label>Traveling with<select id="group"><option>Friends</option><option>Solo</option><option>Family</option><option>Other</option></select></label>
+          </div>
+          <label>Travelers<input id="travelers" maxlength="300" aria-describedby="traveler-help"></label>
+          <p id="traveler-help" class="hint">Enter actual names separated by commas. Replace a name to rename a traveler; expenses and splits update too. When replacing multiple names, keep their order. Add new names at the end. Currency locks while expenses or estimates exist. Changes save when you leave a valid field.</p>
+          <button type="submit">Save trip details</button>
+        </form>
+        <button id="invite" type="button" class="secondary">Copy invitation ↗</button>
+        <label id="invite-label" hidden>Invitation summary<textarea id="invite-text" rows="6" readonly></textarea></label>
+      </section>
+    <nav class="view-nav" aria-label="Planner views">
+      <button type="button" data-view="itinerary" aria-current="page">01 · Itinerary</button>
+      <button type="button" data-view="budget">02 · Budget & Expenses</button>
+      <button type="button" data-view="settle">03 · Settle Up</button>
+    </nav>
+    <div id="itinerary" class="view">
+      <section class="daily-itinerary" aria-labelledby="schedule-title">
+        <h2 id="schedule-title">Daily itinerary</h2>
+        <div id="day-chips" class="day-chips" role="group" aria-label="Choose an itinerary day"></div>
+        <label hidden>Explore your days<select id="day-select"></select></label>
+        <p id="day-caption"></p><ul id="activities" class="list"></ul>
+      </section>
+      <section class="card activity-editor" aria-labelledby="editor-title">
+        <h2 id="editor-title">Add or edit an activity</h2>
+        <form id="activity-form">
+          <div class="fields"><label>Time<input id="time" type="time" required value="09:00"></label><label>What’s the plan?<input id="activity" required maxlength="160"></label></div>
+          <div class="fields"><label>Category<select id="category"><option>Activity</option><option>Food</option><option>Stay</option><option>Sights</option><option>Transit</option></select></label><label>Place<input id="place" maxlength="160"></label></div>
+          <label>Estimated group cost<input id="estimate" type="number" min="0" max="100000000" step="0.01"></label>
+          <label>Notes<textarea id="notes" rows="2" maxlength="600"></textarea></label>
+          <button id="add-activity" type="submit">Add activity +</button>
+          <button id="cancel-edit" type="button" class="secondary" hidden>Cancel edit</button>
+        </form>
+      </section>
+    </div>
+    <div id="budget" class="view" hidden>
+      <section class="card" aria-labelledby="budget-title">
+        <p class="eyebrow">MAKE ROOM FOR MEMORIES</p><h2 id="budget-title">Your trip budget</h2>
+        <form id="budget-form"><div class="fields"><label>Budget amount<input id="budget-input" type="number" min="0" max="100000000" step="0.01" required></label><label>Budget basis<select id="budget-mode"><option value="total">Whole trip</option><option value="person">Per person</option></select></label></div><button type="submit">Save budget</button></form>
+        <dl id="budget-summary" class="summary"></dl>
+        <label>Spent against budget<progress id="spend-meter" max="100" value="0"></progress></label>
+        <p id="spend-caption" class="hint" role="status"></p>
+        <h3>By category</h3><ul id="category-totals" class="list"></ul>
+      </section>
+      <section class="card" aria-labelledby="expenses-title">
+        <p class="eyebrow">KEEP IT ALL TOGETHER</p><h2 id="expenses-title">Little things add up</h2>
+        <form id="expense-form">
+          <label>Expense<input id="expense-name" required maxlength="100"></label>
+          <div class="fields"><label>Amount<input id="amount" type="number" min="0.01" max="100000000" step="0.01" required></label><label>Paid by<select id="payer"></select></label></div>
+          <div class="fields"><label>Category<select id="expense-category"><option>Activity</option><option>Food</option><option>Stay</option><option>Sights</option><option>Transit</option></select></label><label>Day<select id="expense-day"></select></label></div>
+          <fieldset><legend>Split equally between</legend><div id="split-picks" class="split-picks"></div></fieldset>
+          <p id="expense-help" class="hint">Add traveler names above before recording an expense.</p>
+          <button id="save-expense" type="submit">Add expense +</button>
+          <button id="cancel-expense" type="button" class="secondary" hidden>Cancel edit</button>
+        </form>
+        <ul id="expenses" class="list"></ul>
+      </section>
+    </div>
+    <div id="settle" class="view" hidden>
+      <section class="card" aria-labelledby="balances-title"><p class="eyebrow">FAIR SHARES, HAPPY FRIENDS</p><h2 id="balances-title">Everyone’s balance</h2><p class="hint">Each expense is split only between its selected travelers. Rounding remainders follow their listed order.</p><ul id="balances" class="list"></ul></section>
+      <section class="card tinted" aria-labelledby="transfers-title"><p class="eyebrow">WRAP IT UP</p><h2 id="transfers-title">Settle up, stay friends</h2><ul id="transfers" class="list"></ul><button id="copy-settlement" type="button" class="secondary">Copy summary</button><label id="settlement-label" hidden>Settlement summary<textarea id="settlement-text" rows="5" readonly></textarea></label><p class="hint">Suggested payments only. GoGogo never moves money.</p></section>
+    </div>
+  </main>
+  <footer>GoGogo ↗ <span>Big adventures. Less admin.</span><p>Your plans stay in this browser. No account needed.</p></footer>
+</body>
+</html>
